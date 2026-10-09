@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>BarevPay Travel AI</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
+      --apple-display-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, sans-serif;
+      --apple-rounded-font: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro", system-ui, sans-serif;
+
+      /* THEME: Apple Deep Black (Default) */
+      --bg-primary: #000000;
+      --card-bg: rgba(28, 28, 30, 0.92);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-inner: rgba(255, 255, 255, 0.05);
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-glow: rgba(37, 99, 235, 0.45);
+      --text-main: #f5f5f7;
+      --text-muted: #8e8e93;
+    }
+
+    /* THEME 1: Midnight Navy */
+    body[data-theme="navy"] {
+      --bg-primary: #070d1e;
+      --card-bg: rgba(14, 25, 54, 0.92);
+      --card-border: rgba(59, 130, 246, 0.25);
+      --card-inner: rgba(59, 130, 246, 0.08);
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-glow: rgba(37, 99, 235, 0.55);
+    }
+
+    /* THEME 2: Ceramic Pink */
+    body[data-theme="pink"] {
+      --bg-primary: #180f14;
+      --card-bg: rgba(38, 21, 31, 0.92);
+      --card-border: rgba(244, 114, 182, 0.26);
+      --card-inner: rgba(244, 114, 182, 0.08);
+      --accent: #ec4899;
+      --accent-hover: #db2777;
+      --accent-glow: rgba(236, 72, 153, 0.55);
+    }
+
+    /* THEME 3: Burgundy (Areni Wine) */
+    body[data-theme="burgundy"] {
+      --bg-primary: #15060a;
+      --card-bg: rgba(40, 12, 19, 0.94);
+      --card-border: rgba(225, 29, 72, 0.28);
+      --card-inner: rgba(225, 29, 72, 0.09);
+      --accent: #e11d48;
+      --accent-hover: #be123c;
+      --accent-glow: rgba(225, 29, 72, 0.55);
+    }
+
+    /* THEME 4: Ice Blue */
+    body[data-theme="sky"] {
+      --bg-primary: #06131f;
+      --card-bg: rgba(12, 33, 53, 0.92);
+      --card-border: rgba(56, 189, 248, 0.26);
+      --card-inner: rgba(56, 189, 248, 0.08);
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-glow: rgba(2, 132, 199, 0.55);
+    }
+
+    /* THEME 5: Nardo Grey */
+    body[data-theme="nardo"] {
+      --bg-primary: #151619;
+      --card-bg: rgba(32, 34, 39, 0.94);
+      --card-border: rgba(148, 163, 184, 0.2);
+      --card-inner: rgba(255, 255, 255, 0.05);
+      --accent: #64748b;
+      --accent-hover: #475569;
+      --accent-glow: rgba(100, 116, 139, 0.45);
+    }
+
+    body {
+      font-family: var(--apple-font);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      padding-bottom: 70px;
+      line-height: 1.45;
+      transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .app-container {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: 26px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.65);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+    .header-content {
+      max-width: 580px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-family: var(--apple-rounded-font);
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .brand-slogan {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .avatar-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+    }
+    .avatar-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+    }
+    .avatar-pencil {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: 1.5px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      color: #fff;
+    }
+
+    .ticker-bar {
+      padding: 9px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .ticker-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    /* DISCRETE HOME BUDGET STRIP */
+    .home-budget-strip {
+      padding: 8px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .home-budget-strip:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .home-budget-progress-track {
+      width: 70px;
+      height: 4px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .home-budget-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    .btn-brand {
+      background: var(--accent) !important;
+      color: #ffffff !important;
+      border: none;
+      box-shadow: 0 6px 20px var(--accent-glow);
+      font-family: var(--apple-rounded-font);
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.2s ease, background 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-brand:active {
+      transform: scale(0.97);
+    }
+
+    .tabs-wrapper {
+      background: #151517;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 4px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      padding: 9px 0;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--apple-rounded-font);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield !important;
+      appearance: textfield !important;
+    }
+
+    .currency-input-card {
+      background: var(--card-inner);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .currency-input-card:focus-within {
+      border-color: var(--accent);
+    }
+    .num-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-family: var(--apple-display-font);
+      font-size: 26px;
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+    .curr-tag {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 700;
+      font-family: var(--apple-rounded-font);
+      flex-shrink: 0;
+    }
+    .curr-amd {
+      background: rgba(37, 99, 235, 0.18);
+      color: #60a5fa;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+    }
+    .curr-rub {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .chips-scroller {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 0 2px;
+      scrollbar-width: none;
+    }
+    .chips-scroller::-webkit-scrollbar { display: none; }
+    .chip-btn {
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #d1d5db;
+      font-size: 11px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: var(--apple-rounded-font);
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+    .chip-btn:hover { background: rgba(255, 255, 255, 0.12); }
+    .chip-btn:active { transform: scale(0.96); }
+
+    /* DYNAMIC FLAT DONUT CHART STYLES (APPLE STYLE) */
+    .donut-container {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .donut-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+    }
+    .donut-glow {
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.18;
+      filter: blur(22px);
+      pointer-events: none;
+      transition: background 0.3s ease, opacity 0.3s ease;
+    }
+    .donut-center-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .donut-segment {
+      transition: stroke-dasharray 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  stroke-width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.25s ease,
+                  opacity 0.25s ease;
+      transform-origin: center;
+    }
+    .donut-segment:hover, .donut-segment.highlighted {
+      stroke-width: 17 !important;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45));
+      opacity: 1 !important;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95);
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      background: #1c1c1e;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--apple-rounded-font);
+    }
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    #aiInputText {
+      font-family: var(--apple-font) !important;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.015em;
+    }
+    #aiInputText::placeholder {
+      font-family: var(--apple-font) !important;
+      color: #8e8e93;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    .voice-btn {
+      padding: 12px 16px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.22) 0%, rgba(168, 85, 247, 0.28) 100%) !important;
+      border: 1px solid rgba(244, 63, 94, 0.55) !important;
+      color: #ffe4e6 !important;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--apple-rounded-font);
+      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.25);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .voice-btn:hover {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.32) 0%, rgba(168, 85, 247, 0.38) 100%) !important;
+      border-color: rgba(244, 63, 94, 0.75) !important;
+      transform: translateY(-1px);
+    }
+    .voice-btn:active {
+      transform: scale(0.96);
+    }
+    .voice-btn.mic-recording {
+      background: linear-gradient(135deg, #e11d48 0%, #9333ea 100%) !important;
+      border-color: #f43f5e !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 24px rgba(225, 29, 72, 0.75), 0 0 10px rgba(147, 51, 234, 0.6) !important;
+      animation: pulseVoiceGlow 1.2s infinite ease-in-out;
+    }
+    @keyframes pulseVoiceGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 16px rgba(225, 29, 72, 0.6); }
+      50% { transform: scale(1.04); box-shadow: 0 0 28px rgba(244, 63, 94, 0.9), 0 0 14px rgba(168, 85, 247, 0.8); }
+    }
+
+    .voice-live-banner {
+      margin-top: 8px;
+      padding: 9px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(225, 29, 72, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #fecdd3;
+    }
+    .voice-wave {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      height: 14px;
+    }
+    .voice-wave span {
+      width: 3px;
+      height: 100%;
+      background: #f43f5e;
+      border-radius: 9999px;
+      animation: waveMotion 0.8s infinite ease-in-out alternate;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.2s; height: 60%; background: #c084fc; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.4s; height: 80%; background: #f43f5e; }
+    .voice-wave span:nth-child(4) { animation-delay: 0.15s; height: 50%; background: #e879f9; }
+    @keyframes waveMotion {
+      0% { transform: scaleY(0.3); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP APP BAR -->
+  <header class="app-header">
+    <div class="header-content">
+      
+      <!-- Interactive Armenian Avatar -->
+      <button id="avatarBtn" onclick="openAvatarModal()" class="avatar-btn" title="Сменить аватар">
+        <div id="currentAvatarSlot" class="avatar-icon-box">
+          <span>🏔️</span>
+          <span class="avatar-pencil">✎</span>
+        </div>
+      </button>
+
+      <!-- Center Brand Title & Slogan -->
+      <div>
+        <div class="brand-title">
+          <span>BarevPay</span>
+          <span style="font-size: 14px; color: #38bdf8;">֏</span>
+        </div>
+        <div class="brand-slogan">Ваш умный кошелек в Армении</div>
+      </div>
+
+      <!-- Right Controls: Sync, Rates, Settings Gear -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <!-- Sync button (Green Emerald) -->
+        <button onclick="syncRatesAnim()" style="width: 36px; height: 36px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #34d399; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Обновить курс">
+          <span id="syncIcon" style="display: inline-block;">↻</span>
+        </button>
+
+        <!-- Rates Modal trigger (Green Emerald) -->
+        <button onclick="openRateModal()" style="padding: 8px 12px; border-radius: 12px; background: #059669; border: 1px solid rgba(16, 185, 129, 0.4); color: #ffffff; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--apple-rounded-font);">
+          Курсы
+        </button>
+
+        <!-- Settings Gear (Themes & Geolocation) -->
+        <button onclick="openSettingsModal()" style="width: 36px; height: 36px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14); color: #e5e7eb; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Настройки и локация">
+          ⚙
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="app-container">
+
+    <!-- CURRENCY RATE TICKER WITH GEOLOCATION IN ARMENIA -->
+    <div class="ticker-bar">
+      <div style="display: flex; align-items: center; flex: 1; min-width: 0;">
+        <span class="ticker-pulse"></span>
+        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <span id="geoCityLabel" style="color: #9ca3af; margin-right: 4px;">Ереван (Центр):</span>
+          <strong id="rateTickerLabel" style="color: #ffffff; font-family: var(--apple-rounded-font);">1 ₽ = 4.25 ֏</strong>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+        <button id="detectGeoBtn" onclick="detectArmeniaLocation()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; border-radius: 10px; padding: 3px 8px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Определить геопозицию в Армении">
+          <span id="geoIcon">📍</span>
+          <span id="geoBtnText">Локация</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- DISCRETE HOME BUDGET BAR (Clean Zero State) -->
+    <div class="home-budget-strip" onclick="switchTab('budget')" title="Перейти к управлению бюджетом">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 13px; opacity: 0.85;">🧭</span>
+        <div style="font-size: 11px;">
+          <span style="color: var(--text-muted);">Бюджет: </span>
+          <strong id="homeBudgetSpentLabel" style="color: #f3f4f6; font-family: var(--apple-rounded-font); font-weight: 600;">0 ֏</strong>
+          <span style="color: var(--text-muted); font-size: 10px;"> / <span id="homeBudgetTotalLabel">0 ֏</span></span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="home-budget-progress-track">
+          <div id="homeBudgetProgressBar" class="home-budget-progress-fill"></div>
+        </div>
+        <span id="homeBudgetDailyRemLabel" style="font-size: 11px; color: #34d399; font-family: var(--apple-rounded-font); font-weight: 600;">0 ֏/день</span>
+        <span style="color: var(--text-muted); font-size: 11px;">›</span>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-wrapper">
+      <button id="tabBtnOverview" onclick="switchTab('overview')" class="tab-btn active">Обзор & Ввод</button>
+      <button id="tabBtnAnalytics" onclick="switchTab('analytics')" class="tab-btn">Аналитика</button>
+      <button id="tabBtnBudget" onclick="switchTab('budget')" class="tab-btn">Бюджет</button>
+    </div>
+
+    <!-- TAB 1: OVERVIEW & AI INPUT -->
+    <div id="overviewTab">
+      
+      <!-- BLOCK 1: AI ASSISTANT GEVOR -->
+      <section class="glass-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- 3D Bot SVG Sticker -->
+            <div style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #1e3a8a, #0284c7); padding: 1px; display: flex; align-items: center; justify-content: center; position: relative;">
+              <svg viewBox="0 0 64 64" style="width: 32px; height: 32px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="14" y="16" width="36" height="32" rx="10" fill="#0f172a" stroke="#60A5FA" stroke-width="2"/>
+                <rect x="20" y="24" width="24" height="11" rx="4" fill="#030712"/>
+                <circle cx="27" cy="29.5" r="3" fill="#38BDF8"/>
+                <circle cx="37" cy="29.5" r="3" fill="#38BDF8"/>
+                <path d="M32 9V16" stroke="#93C5FD" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="32" r="3.5" cy="8" fill="#60A5FA"/>
+                <rect x="15" y="42" width="2" height="1.8" fill="#D90012"/>
+                <rect x="15" y="43.8" width="2" height="1.8" fill="#0033A0"/>
+                <rect x="15" y="45.6" width="2" height="1.8" fill="#F2A800"/>
+              </svg>
+              <span style="position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px; border-radius: 50%; background: #10b981; border: 2px solid #000;"></span>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h2 style="font-size: 15px; font-weight: 700; color: #fff;">AI помощник Гевор</h2>
+                <span style="font-size: 9px; padding: 2px 6px; border-radius: 8px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; font-weight: 700;">Ереван</span>
+              </div>
+              <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Распознает свободную речь и чеки за 1 секунду</p>
+            </div>
+          </div>
+          <span style="font-size: 10px; color: #9ca3af; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: 8px;">Voice & OCR</span>
+        </div>
+
+        <!-- Speech textarea with pure Apple typography -->
+        <textarea id="aiInputText" rows="3" placeholder="Введите траты свободной речью (например: «Такси на Каскад 1400 и вино в SAS 6500»)..." style="width: 100%; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; font-size: 14px; color: #fff; outline: none; resize: none; line-height: 1.45; font-family: var(--apple-font);"></textarea>
+
+        <!-- Live Voice Listening Status Bar (Visible only when microphone is listening) -->
+        <div id="voiceLiveBanner" class="voice-live-banner hidden">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="voice-wave">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <span id="voiceLiveStatusText" style="font-weight: 600;">Слушаю вас... Говорите траты</span>
+          </div>
+          <button type="button" onclick="stopVoiceRecording()" style="background: rgba(244,63,94,0.25); border: 1px solid rgba(244,63,94,0.5); color: #fff; border-radius: 8px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-family: var(--apple-rounded-font);">
+            Готово
+          </button>
+        </div>
+
+        <!-- Receipt preview (Hidden by default) -->
+        <div id="receiptPreviewBox" class="hidden" style="margin-top: 8px; padding: 8px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+          <span id="receiptFileName" style="color: #a7f3d0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 240px;">Чек прикреплен</span>
+          <button onclick="removeAttachedReceipt()" style="background: none; border: none; color: #f87171; cursor: pointer; font-size: 14px;">✕</button>
+        </div>
+
+        <!-- Action Buttons with Dedicated Highlighted Voice Dictation Mode -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+          <!-- Voice Button (Highlighted Distinct Coral-Rose Accent) -->
+          <button type="button" id="voiceRecordBtn" onclick="toggleVoiceRecording()" class="voice-btn" title="Диктовка трат голосом">
+            <span id="voiceIcon">🎙️</span>
+            <span id="voiceLabel">Голос</span>
+          </button>
+
+          <input type="file" id="receiptFileInput" accept="image/*" class="hidden" onchange="handleReceiptFileSelected(event)">
+          
+          <button type="button" onclick="document.getElementById('receiptFileInput').click()" style="padding: 12px 14px; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #e5e7eb; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: var(--apple-rounded-font);">
+            <span>📷</span>
+            <span>Чек</span>
+          </button>
+
+          <button type="button" onclick="processAiInput()" class="btn-brand" style="flex: 1; padding: 12px 18px; font-size: 13px;">
+            <span>✨</span>
+            <span>Распознать & Записать</span>
+          </button>
+        </div>
+
+        <!-- Prompt chips -->
+        <div class="chips-scroller" style="margin-top: 8px;">
+          <span style="font-size: 10px; color: var(--text-muted); flex-shrink: 0;">Примеры:</span>
+          <button onclick="fillAiExample('🚕 GG такси из Звартноца 2800')" class="chip-btn">🚕 GG такси 2800</button>
+          <button onclick="fillAiExample('🍷 Арени и сыр в SAS 6500')" class="chip-btn">🍷 Арени в SAS 6500</button>
+          <button onclick="fillAiExample('🍽 Таверна Ереван ужин 16500')" class="chip-btn">🍽 Таверна 16500</button>
+          <button onclick="fillAiExample('📱 Ucom SIM интернет 5000')" class="chip-btn">📱 Ucom SIM 5000</button>
+          <button onclick="fillAiExample('🏛 Билеты в Гарни 2500')" class="chip-btn">🏛 Гарни 2500</button>
+        </div>
+      </section>
+
+      <!-- BLOCK 2: EXPRESS CONVERTER (Clean Initial State) -->
+      <section class="glass-card">
+        <h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); text-align: center; margin-bottom: 12px; font-family: var(--apple-rounded-font);">
+          Экспресс-конвертер
+        </h2>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+          <!-- AMD -->
+          <div class="currency-input-card">
+            <div style="flex: 1;">
+              <label style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Драмы (AMD)</label>
+              <input id="convAmdInput" type="number" value="" class="num-field" placeholder="0" oninput="onAmdConvChanged(this.value)">
+            </div>
+            <div class="curr-tag curr-amd">֏</div>
+          </div>
+
+          <!-- RUB -->
+          <div class="currency-input-card">
+            <div style="flex: 1;">
+              <label style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Рубли (RUB)</label>
+              <input id="convRubInput" type="number" value="" class="num-field" placeholder="0" oninput="onRubConvChanged(this.value)">
+            </div>
+            <div class="curr-tag curr-rub">₽</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px;">
+          <span style="color: var(--text-muted);">Суммы:</span>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <button onclick="setFastConvAmd(1500)" class="chip-btn">1.5 тыс ֏</button>
+            <button onclick="setFastConvAmd(5000)" class="chip-btn">5 тыс ֏</button>
+            <button onclick="setFastConvAmd(25000)" class="chip-btn">25 тыс ֏</button>
+            <button onclick="setFastConvAmd(50000)" class="chip-btn">50 тыс ֏</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BLOCK 3: EXPENSE STATISTICS & ANIMATED DONUT -->
+      <section class="glass-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+          <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Статистика расходов</h3>
+          <button onclick="openManualExpenseModal()" style="padding: 6px 14px; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--apple-rounded-font);">
+            + Вручную
+          </button>
+        </div>
+
+        <!-- Donut & Breakdown (Dynamic View) -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 8px 0 16px;">
+          
+          <div class="donut-container" id="donutContainer">
+            <div class="donut-glow"></div>
+            
+            <div class="donut-stage" id="donutStage">
+              <svg viewBox="0 0 120 120" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+                <!-- Base Track Circle -->
+                <circle cx="60" cy="60" r="46" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="12" />
+                <!-- Segments Group (Interactive Highlight Rings) -->
+                <g id="donutSegmentsGroup"></g>
+              </svg>
+
+              <!-- Central Information HUD -->
+              <div class="donut-center-text" id="donutCenterHud">
+                <span id="donutCenterLabel" style="font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Всего</span>
+                <span id="overviewDonutTotalAmd" style="font-family: var(--apple-display-font); font-size: 22px; font-weight: 400; color: #fff; margin-top: 1px;">0 ֏</span>
+                <span id="overviewDonutTotalRub" style="font-size: 11px; color: var(--text-muted); font-family: var(--apple-rounded-font); margin-top: 2px;">≈ 0 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Categories Breakdown -->
+          <div style="width: 100%;">
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;">
+              <span>Главные статьи трат:</span>
+              <span id="overviewCategoriesCountLabel" style="font-size: 10px; font-family: var(--apple-rounded-font);">0 категорий</span>
+            </div>
+            <div id="overviewTopCategoriesList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+          </div>
+
+        </div>
+
+        <!-- Details Button -->
+        <button onclick="switchTab('analytics')" class="btn-brand" style="width: 100%; padding: 14px 20px; font-size: 13px;">
+          <span>История и детализация расходов →</span>
+        </button>
+      </section>
+
+    </div>
+
+    <!-- TAB 2: ANALYTICS -->
+    <div id="analyticsTab" class="hidden">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+        <div class="glass-card" style="text-align: center; padding: 16px; margin: 0;">
+          <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Средний чек</div>
+          <div id="statAverageCheck" style="font-size: 19px; font-weight: 700; color: #fff; margin-top: 4px; font-family: var(--apple-rounded-font);">0 ֏</div>
+          <div id="statAverageCheckRub" style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">≈ 0 ₽</div>
+        </div>
+
+        <div class="glass-card" style="text-align: center; padding: 16px; margin: 0;">
+          <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Всего записей</div>
+          <div id="statTotalOperationsCount" style="font-size: 19px; font-weight: 700; color: #fff; margin-top: 4px; font-family: var(--apple-rounded-font);">0</div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">в памяти</div>
+        </div>
+      </div>
+
+      <section class="glass-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+          <span style="font-size: 13px; font-weight: 700; color: #fff;">Фильтр категорий</span>
+          <button id="clearCategoryFilterBtn" onclick="clearCategoryFilter()" class="hidden" style="background: none; border: none; color: #60a5fa; font-size: 11px; cursor: pointer;">
+            Сбросить
+          </button>
+        </div>
+        <div id="analyticsCategoryChips" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+      </section>
+
+      <section class="glass-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff;">Все операции</h3>
+          <button onclick="exportTransactionsCsv()" style="background: none; border: none; color: #34d399; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--apple-rounded-font);">
+            Экспорт CSV
+          </button>
+        </div>
+        <div id="analyticsTransactionsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </section>
+
+    </div>
+
+    <!-- TAB 3: BUDGET (Clean Zero State) -->
+    <div id="budgetTab" class="hidden">
+      <section class="glass-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+          <div>
+            <div style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Контроль трат</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Бюджет поездки</h3>
+          </div>
+          <button onclick="editBudgetPrompt()" style="padding: 6px 14px; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: 12px; cursor: pointer; font-family: var(--apple-rounded-font);">
+            Задать бюджет
+          </button>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Использовано: <strong id="budgetSpentPercent" style="color: #fff;">0%</strong></span>
+            <span id="budgetFractionLabel" style="color: #fff; font-family: var(--apple-rounded-font);">0 ֏ / 0 ֏</span>
+          </div>
+          <div style="width: 100%; height: 10px; border-radius: 9999px; background: rgba(255,255,255,0.08); overflow: hidden;">
+            <div id="budgetProgressBar" style="height: 100%; width: 0%; background: var(--accent); border-radius: 9999px; transition: width 0.6s ease;"></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: rgba(255,255,255,0.04); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 10px; color: var(--text-muted);">Остаток бюджета</div>
+            <div id="budgetRemainingAmd" style="font-size: 16px; font-weight: 700; color: #34d399; margin-top: 3px; font-family: var(--apple-rounded-font);">0 ֏</div>
+            <div id="budgetRemainingRub" style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">≈ 0 ₽</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.04); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 10px; color: var(--text-muted);">Лимит в день (на 7 дней)</div>
+            <div id="budgetDailyAmd" style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 3px; font-family: var(--apple-rounded-font);">0 ֏</div>
+            <div id="budgetDailyRub" style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">≈ 0 ₽</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- MODAL: SETTINGS & THEMES & GEOLOCATION -->
+  <div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal-box" style="max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Настройки приложения</h3>
+        <button onclick="closeSettingsModal()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- GEOLOCATION SECTION IN SETTINGS -->
+      <div style="margin-bottom: 16px; padding: 14px; border-radius: 18px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.04em;">📍 Геопозиция в Армении</span>
+          <span id="settingsCurrentLocBadge" style="font-size: 10px; background: rgba(56,189,248,0.2); color: #7dd3fc; padding: 2px 6px; border-radius: 6px; font-weight: 600;">Ереван</span>
+        </div>
+        
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+          Курс автоматически подбирается под ваш город и ближайшие проверенные пункты обмена.
+        </p>
+
+        <!-- GPS Button -->
+        <button onclick="detectGeoFromSettings()" style="width: 100%; padding: 10px; border-radius: 12px; background: #0284c7; border: 1px solid rgba(56,189,248,0.5); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; font-family: var(--apple-rounded-font);">
+          <span id="settingsGpsIcon">🛰️</span>
+          <span id="settingsGpsText">Определить мою геопозицию по GPS</span>
+        </button>
+
+        <!-- Armenia Cities Grid -->
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Быстрый выбор региона:</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;">
+          <button onclick="setCityFromSettings('Ереван (Центр / SAS)', 4.25)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Ереван (Кентрон)</div>
+            <div style="color: #34d399; font-weight: 700; font-size: 10px;">SAS / MG: 4.25 ֏</div>
+          </button>
+          <button onclick="setCityFromSettings('Гюмри (Ширак)', 4.19)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Гюмри (Ширак)</div>
+            <div style="color: #60a5fa; font-weight: 700; font-size: 10px;">ВТБ / Банки: 4.19 ֏</div>
+          </button>
+          <button onclick="setCityFromSettings('Дилижан (Тавуш)', 4.16)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Дилижан</div>
+            <div style="color: #34d399; font-weight: 700; font-size: 10px;">Обменники: 4.16 ֏</div>
+          </button>
+          <button onclick="setCityFromSettings('Цахкадзор (Котайк)', 4.18)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Цахкадзор</div>
+            <div style="color: #60a5fa; font-weight: 700; font-size: 10px;">Кассы: 4.18 ֏</div>
+          </button>
+          <button onclick="setCityFromSettings('Севан (Гегаркуник)', 4.15)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Севан</div>
+            <div style="color: #60a5fa; font-weight: 700; font-size: 10px;">Кассы: 4.15 ֏</div>
+          </button>
+          <button onclick="setCityFromSettings('Горис (Сюник)', 4.14)" style="padding: 8px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+            <div>Горис / Сюник</div>
+            <div style="color: #34d399; font-weight: 700; font-size: 10px;">Отделения: 4.14 ֏</div>
+          </button>
+        </div>
+
+        <!-- Custom Location Input -->
+        <div style="display: flex; gap: 6px;">
+          <input id="settingsCustomLocInput" type="text" placeholder="Свой район (напр. Арабкир)" style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 7px 10px; color: #fff; font-size: 11px; outline: none;">
+          <button onclick="applyCustomLocFromSettings()" style="padding: 7px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer;">
+            Задать
+          </button>
+        </div>
+      </div>
+
+      <!-- THEMES SECTION -->
+      <div style="margin-bottom: 8px;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em;">🎨 Темы оформления (iOS Style)</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button onclick="setTheme('default')" style="padding: 10px 14px; border-radius: 14px; background: #000; border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
+          <span>Apple Deep Black (Классика)</span>
+        </button>
+        <button onclick="setTheme('navy')" style="padding: 10px 14px; border-radius: 14px; background: #070d1e; border: 1px solid rgba(59,130,246,0.3); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #3b82f6; display: inline-block;"></span>
+          <span>Темно-синяя (Midnight Navy)</span>
+        </button>
+        <button onclick="setTheme('pink')" style="padding: 10px 14px; border-radius: 14px; background: #180f14; border: 1px solid rgba(244,114,182,0.3); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #ec4899; display: inline-block;"></span>
+          <span>Керамик пинк (Ceramic Pink)</span>
+        </button>
+        <button onclick="setTheme('burgundy')" style="padding: 10px 14px; border-radius: 14px; background: #15060a; border: 1px solid rgba(225,29,72,0.3); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #e11d48; display: inline-block;"></span>
+          <span>Бордовые тона (Areni Wine)</span>
+        </button>
+        <button onclick="setTheme('sky')" style="padding: 10px 14px; border-radius: 14px; background: #06131f; border: 1px solid rgba(56,189,248,0.3); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #0284c7; display: inline-block;"></span>
+          <span>Светло-голубой (Ice Blue)</span>
+        </button>
+        <button onclick="setTheme('nardo')" style="padding: 10px 14px; border-radius: 14px; background: #151619; border: 1px solid rgba(148,163,184,0.3); color: #fff; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
+          <span>Нардо грей (Nardo Grey)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AVATARS -->
+  <div id="avatarModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Выберите аватар</h3>
+        <button onclick="closeAvatarModal()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button onclick="selectAvatar('ararat')" style="padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; text-align: center;">
+          <div style="font-size: 28px;">🏔️</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Гора Арарат</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Масис и Сис</div>
+        </button>
+        <button onclick="selectAvatar('garni')" style="padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; text-align: center;">
+          <div style="font-size: 28px;">🏛️</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Храм Гарни</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Античный храм</div>
+        </button>
+        <button onclick="selectAvatar('pomegranate')" style="padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; text-align: center;">
+          <div style="font-size: 28px;">🍎</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Гранат (Нур)</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Символ жизни</div>
+        </button>
+        <button onclick="selectAvatar('apricot')" style="padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; text-align: center;">
+          <div style="font-size: 28px;">🍑</div>
+          <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Абрикос (Циран)</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Спелый фрукт</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RATES -->
+  <div id="rateModal" class="modal-overlay hidden">
+    <div class="modal-box" style="max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Курсы валют в Ереване</h3>
+        <button onclick="closeRateModal()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- SAS / MG Cash -->
+        <button onclick="setCustomRate(4.25, 'SAS / MG (Наличные)')" style="padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left;">
+          <div>
+            <div style="font-weight: 700; font-size: 13px;">Обменники SAS / MG</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Наличные рубли (Центр)</div>
+          </div>
+          <strong style="color: #34d399; font-family: var(--apple-rounded-font); font-size: 14px;">1 ₽ = 4.25 ֏</strong>
+        </button>
+
+        <!-- VTB Bank Armenia -->
+        <button onclick="setCustomRate(4.18, 'ВТБ (Армения)')" style="padding: 12px; border-radius: 14px; background: rgba(37,99,235,0.12); border: 1px solid rgba(59,130,246,0.35); color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left;">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: #93c5fd; display: flex; align-items: center; gap: 6px;">
+              <span>Банк ВТБ (Армения)</span>
+              <span style="font-size: 9px; padding: 2px 6px; border-radius: 6px; background: #2563eb; color: #fff; font-weight: 800;">МИР</span>
+            </div>
+            <div style="font-size: 10px; color: #9ca3af;">Банкоматы, карты МИР и переводы</div>
+          </div>
+          <strong style="color: #60a5fa; font-family: var(--apple-rounded-font); font-size: 14px;">1 ₽ = 4.18 ֏</strong>
+        </button>
+
+        <!-- Ameria / Ardshin -->
+        <button onclick="setCustomRate(4.15, 'Банки (Ameria / Ardshin)')" style="padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left;">
+          <div>
+            <div style="font-weight: 700; font-size: 13px;">Ameria / Ardshinbank</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Безналичный обмен в кассах</div>
+          </div>
+          <strong style="color: #34d399; font-family: var(--apple-rounded-font); font-size: 14px;">1 ₽ = 4.15 ֏</strong>
+        </button>
+
+        <!-- GEO LOCATIONS SELECTOR -->
+        <div style="margin-top: 4px; padding: 12px; border-radius: 16px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.2);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8;">📍 Курсы по городам Армении</span>
+            <button onclick="detectArmeniaLocation(); closeRateModal();" style="background: none; border: none; color: #60a5fa; font-size: 11px; cursor: pointer;">Авто-GPS</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <button onclick="applyLocationPreset('yerevan_center')" style="padding: 7px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+              <div>Ереван (Кентрон)</div>
+              <div style="color: #34d399; font-weight: 700;">4.25 ֏ (SAS/MG)</div>
+            </button>
+            <button onclick="applyLocationPreset('gyumri')" style="padding: 7px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+              <div>Гюмри (Ширак)</div>
+              <div style="color: #60a5fa; font-weight: 700;">4.19 ֏ (ВТБ/Банки)</div>
+            </button>
+            <button onclick="applyLocationPreset('dilijan')" style="padding: 7px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+              <div>Дилижан</div>
+              <div style="color: #34d399; font-weight: 700;">4.16 ֏ (Обмен)</div>
+            </button>
+            <button onclick="applyLocationPreset('sevan')" style="padding: 7px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #fff; font-size: 11px; text-align: left; cursor: pointer;">
+              <div>Севан / Гегаркуник</div>
+              <div style="color: #60a5fa; font-weight: 700;">4.15 ֏ (Кассы)</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bybit P2P -->
+        <button onclick="setCustomRate(4.35, 'Bybit P2P (USDT)')" style="padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left;">
+          <div>
+            <div style="font-weight: 700; font-size: 13px;">Bybit P2P / USDT</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Криптобиржи и арбитраж</div>
+          </div>
+          <strong style="color: #34d399; font-family: var(--apple-rounded-font); font-size: 14px;">1 ₽ = 4.35 ֏</strong>
+        </button>
+
+        <!-- СВОЙ КУРС -->
+        <div style="margin-top: 6px; padding: 14px; border-radius: 16px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #34d399; letter-spacing: 0.04em;">
+              ✏ Свой собственный курс
+            </label>
+            <span style="font-size: 10px; color: var(--text-muted);">Произвольный</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="flex: 1; position: relative;">
+              <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #9ca3af;">1 ₽ =</span>
+              <input id="customUserRateInput" type="number" step="0.01" placeholder="4.22" style="width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 9px 10px 9px 40px; color: #fff; font-size: 15px; font-family: var(--apple-display-font); outline: none;">
+              <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #38bdf8;">֏</span>
+            </div>
+
+            <button onclick="applyUserDefinedRate()" class="btn-brand" style="padding: 10px 16px; font-size: 12px; border-radius: 12px; white-space: nowrap;">
+              Применить
+            </button>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">
+            Укажите курс, по которому вы лично поменяли рубли (сохранится в приложении).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MANUAL EXPENSE -->
+  <div id="manualModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 700; color: #fff;">Добавить расход вручную</h3>
+        <button onclick="closeManualExpenseModal()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div>
+          <label style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Сумма в драмах (֏)</label>
+          <input id="manualAmountInput" type="number" placeholder="Например: 3500" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 12px; color: #fff; font-size: 16px; margin-top: 4px; outline: none;">
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Описание</label>
+          <input id="manualTitleInput" type="text" placeholder="Например: Обед в кафе" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 12px; color: #fff; font-size: 14px; margin-top: 4px; outline: none;">
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Категория</label>
+          <select id="manualCategoryInput" style="width: 100%; background: #1c1c1e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 12px; color: #fff; font-size: 14px; margin-top: 4px; outline: none;">
+            <option value="Еда и кафе">Еда и кафе</option>
+            <option value="Транспорт и Такси">Транспорт и Такси</option>
+            <option value="Супермаркеты">Супермаркеты</option>
+            <option value="Вино и сувениры">Вино и сувениры</option>
+            <option value="Жилье и отели">Жилье и отели</option>
+            <option value="Экскурсии и гиды">Экскурсии и гиды</option>
+            <option value="Аптеки и здоровье">Аптеки и здоровье</option>
+            <option value="Связь и SIM">Связь и SIM</option>
+            <option value="Авто и бензин">Авто и бензин</option>
+            <option value="Шоппинг">Шоппинг</option>
+            <option value="Прочее">Прочее</option>
+          </select>
+        </div>
+        <button onclick="submitManualExpense()" class="btn-brand" style="padding: 12px; margin-top: 6px;">Записать расход</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification" class="toast-msg">
+    <span id="toastIcon">✓</span>
+    <span id="toastMessage">Готово!</span>
+  </div>
+
+  <script>
+    const CATEGORIES = {
+      'Еда и кафе': { color: '#38bdf8', icon: '🍽' },
+      'Транспорт и Такси': { color: '#f59e0b', icon: '🚕' },
+      'Супермаркеты': { color: '#10b981', icon: '🛒' },
+      'Вино и сувениры': { color: '#f43f5e', icon: '🍷' },
+      'Жилье и отели': { color: '#a855f7', icon: '🏨' },
+      'Экскурсии и гиды': { color: '#06b6d4', icon: '🏛' },
+      'Аптеки и здоровье': { color: '#ec4899', icon: '💊' },
+      'Связь и SIM': { color: '#3b82f6', icon: '📱' },
+      'Авто и бензин': { color: '#eab308', icon: '⛽' },
+      'Шоппинг': { color: '#8b5cf6', icon: '🛍' },
+      'Прочее': { color: '#94a3b8', icon: '💳' }
+    };
+
+    let rateAmdPerRub = 4.25;
+    let budgetTotalAmd = 0; // Чистый нулевой старт
+    let selectedCategoryFilter = null;
+    let attachedReceiptFile = null;
+    let currentLocationName = 'Ереван (Центр)';
+
+    const ARMENIA_REGIONS = [
+      { name: 'Ереван (Кентрон / SAS)', lat: 40.1792, lng: 44.4991, rate: 4.25, radiusKm: 15 },
+      { name: 'Гюмри (Ширак)', lat: 40.7929, lng: 43.8465, rate: 4.19, radiusKm: 25 },
+      { name: 'Ванадзор (Лорийский р-н)', lat: 40.8128, lng: 44.4883, rate: 4.17, radiusKm: 20 },
+      { name: 'Дилижан (Тавуш)', lat: 40.7420, lng: 44.8631, rate: 4.16, radiusKm: 20 },
+      { name: 'Цахкадзор (Котайк)', lat: 40.5319, lng: 44.7170, rate: 4.18, radiusKm: 15 },
+      { name: 'Севан (Гегаркуник)', lat: 40.5559, lng: 44.9548, rate: 4.15, radiusKm: 25 },
+      { name: 'Горис / Сюник', lat: 39.5108, lng: 46.3389, rate: 4.14, radiusKm: 35 }
+    ];
+
+    // Чистый список расходов без демонстрационных примеров
+    let transactions = [];
+
+    function initApp() {
+      try {
+        const savedTrans = localStorage.getItem('barevpay_transactions');
+        if (savedTrans) transactions = JSON.parse(savedTrans);
+        
+        const savedRate = localStorage.getItem('barevpay_rate');
+        if (savedRate) rateAmdPerRub = parseFloat(savedRate) || 4.25;
+
+        const savedBudget = localStorage.getItem('barevpay_budget');
+        if (savedBudget) budgetTotalAmd = parseFloat(savedBudget) || 0;
+
+        const savedLoc = localStorage.getItem('barevpay_loc_name');
+        if (savedLoc) currentLocationName = savedLoc;
+
+        const savedTheme = localStorage.getItem('barevpay_theme') || 'default';
+        applyTheme(savedTheme);
+
+        const savedAvatar = localStorage.getItem('barevpay_avatar') || 'ararat';
+        applyAvatar(savedAvatar);
+      } catch (e) {
+        console.error(e);
+      }
+
+      updateRateTickerDisplay();
+      renderOverviewDonut();
+      onAmdConvChanged(document.getElementById('convAmdInput').value || '');
+      renderAnalyticsView();
+      renderBudgetView();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('barevpay_transactions', JSON.stringify(transactions));
+        localStorage.setItem('barevpay_rate', rateAmdPerRub.toString());
+        localStorage.setItem('barevpay_budget', budgetTotalAmd.toString());
+        localStorage.setItem('barevpay_loc_name', currentLocationName);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    /* GEOLOCATION DETECTOR IN ARMENIA */
+    function detectArmeniaLocation() {
+      const btnText = document.getElementById('geoBtnText');
+      const icon = document.getElementById('geoIcon');
+      if (!navigator.geolocation) {
+        showToast('Геолокация не поддерживается вашим браузером', '⚠️');
+        return;
+      }
+
+      btnText.textContent = 'Поиск...';
+      icon.textContent = '🛰️';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          resolveArmeniaRateByCoords(lat, lng);
+        },
+        (err) => {
+          console.warn('Geolocation error:', err);
+          btnText.textContent = 'Локация';
+          icon.textContent = '📍';
+          applyLocationPreset('yerevan_center');
+          showToast('Установили: Ереван (SAS / MG, 4.25 ֏)', '📍');
+        },
+        { timeout: 7000, maximumAge: 60000 }
+      );
+    }
+
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth radius km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function resolveArmeniaRateByCoords(lat, lng) {
+      let closest = ARMENIA_REGIONS[0];
+      let minDistance = calculateDistanceKm(lat, lng, closest.lat, closest.lng);
+
+      for (let i = 1; i < ARMENIA_REGIONS.length; i++) {
+        const d = calculateDistanceKm(lat, lng, ARMENIA_REGIONS[i].lat, ARMENIA_REGIONS[i].lng);
+        if (d < minDistance) {
+          minDistance = d;
+          closest = ARMENIA_REGIONS[i];
+        }
+      }
+
+      currentLocationName = closest.name;
+      setCustomRate(closest.rate, `${closest.name} (${Math.round(minDistance)} км)`);
+
+      document.getElementById('geoBtnText').textContent = 'Найдено';
+      document.getElementById('geoIcon').textContent = '✓';
+      setTimeout(() => {
+        document.getElementById('geoBtnText').textContent = 'Локация';
+        document.getElementById('geoIcon').textContent = '📍';
+      }, 2000);
+    }
+
+    function applyLocationPreset(key) {
+      if (key === 'yerevan_center') {
+        currentLocationName = 'Ереван (SAS / MG)';
+        setCustomRate(4.25, 'Ереван (Центр, обменники SAS / MG)');
+      } else if (key === 'gyumri') {
+        currentLocationName = 'Гюмри (Ширак)';
+        setCustomRate(4.19, 'Гюмри (Кассы ВТБ / Converse)');
+      } else if (key === 'dilijan') {
+        currentLocationName = 'Дилижан';
+        setCustomRate(4.16, 'Дилижан (Обменные пункты)');
+      } else if (key === 'sevan') {
+        currentLocationName = 'Севан';
+        setCustomRate(4.15, 'Севан / Гегаркуник');
+      }
+      closeRateModal();
+    }
+
+    /* DYNAMIC FLAT DONUT RENDERING ENGINE (APPLE MINIMALIST) */
+    function renderOverviewDonut() {
+      const totalAmd = transactions.reduce((acc, t) => acc + t.amountAmd, 0);
+      const totalRub = rateAmdPerRub > 0 ? Math.round(totalAmd / rateAmdPerRub) : 0;
+
+      resetDonutCenterDisplay(totalAmd, totalRub);
+
+      const catTotals = {};
+      transactions.forEach(t => {
+        catTotals[t.category] = (catTotals[t.category] || 0) + t.amountAmd;
+      });
+
+      const sortedCats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+      document.getElementById('overviewCategoriesCountLabel').textContent = `${sortedCats.length} категорий`;
+
+      const topList = document.getElementById('overviewTopCategoriesList');
+      if (sortedCats.length === 0) {
+        topList.innerHTML = `<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 14px 8px; border-radius: 14px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08);">Расходов пока нет. Начните вводить траты голосом или вручную!</div>`;
+      } else {
+        topList.innerHTML = sortedCats.slice(0, 4).map(([cat, amt]) => {
+          const pct = totalAmd > 0 ? Math.round((amt / totalAmd) * 100) : 0;
+          const meta = CATEGORIES[cat] || CATEGORIES['Прочее'];
+          return `
+            <div onmouseenter="highlightDonutCategory('${cat}')" onmouseleave="resetDonutHighlight()" onclick="toggleCategoryFilter('${cat}'); switchTab('analytics');" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${meta.color}; box-shadow: 0 0 8px ${meta.color};"></span>
+                <span style="color: #fff; font-weight: 500;">${cat}</span>
+              </div>
+              <div>
+                <strong style="color: #fff; font-family: var(--apple-rounded-font);">${amt.toLocaleString('ru-RU')} ֏</strong>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 4px;">(${pct}%)</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Flat SVG Segments with dynamic hover thickness & glow
+      const group = document.getElementById('donutSegmentsGroup');
+      group.innerHTML = '';
+      if (totalAmd === 0) return;
+
+      const radius = 46;
+      const circumference = 2 * Math.PI * radius;
+      let accumulatedPercent = 0;
+
+      sortedCats.forEach(([cat, amt]) => {
+        const percent = amt / totalAmd;
+        const segmentLength = percent * circumference;
+        const offset = -(accumulatedPercent * circumference);
+        accumulatedPercent += percent;
+
+        const meta = CATEGORIES[cat] || CATEGORIES['Прочее'];
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '60');
+        circle.setAttribute('cy', '60');
+        circle.setAttribute('r', radius.toString());
+        circle.setAttribute('fill', 'transparent');
+        circle.setAttribute('stroke', meta.color);
+        circle.setAttribute('stroke-width', '12');
+        circle.setAttribute('stroke-linecap', 'round');
+        circle.setAttribute('stroke-dasharray', `${Math.max(segmentLength - 2.5, 0)} ${circumference}`);
+        circle.setAttribute('stroke-dashoffset', offset.toString());
+        circle.setAttribute('class', 'donut-segment');
+        circle.setAttribute('data-category', cat);
+        circle.setAttribute('data-amount', amt.toString());
+        circle.setAttribute('data-pct', Math.round(percent * 100).toString());
+        circle.style.cursor = 'pointer';
+
+        // Dynamic Interactive Highlight
+        circle.onmouseenter = () => {
+          highlightDonutSegment(circle, cat, amt, Math.round(percent * 100));
+        };
+        circle.onmouseleave = () => {
+          resetDonutHighlight();
+        };
+        circle.onclick = () => {
+          selectedCategoryFilter = cat;
+          switchTab('analytics');
+        };
+
+        group.appendChild(circle);
+      });
+    }
+
+    function highlightDonutSegment(element, cat, amt, pct) {
+      document.querySelectorAll('.donut-segment').forEach(el => {
+        if (el === element) {
+          el.classList.add('highlighted');
+        } else {
+          el.style.opacity = '0.32';
+        }
+      });
+      document.getElementById('donutCenterLabel').textContent = `${cat} (${pct}%)`;
+      document.getElementById('overviewDonutTotalAmd').textContent = `${amt.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('overviewDonutTotalRub').textContent = `≈ ${Math.round(amt / rateAmdPerRub).toLocaleString('ru-RU')} ₽`;
+    }
+
+    function highlightDonutCategory(cat) {
+      const target = document.querySelector(`.donut-segment[data-category="${cat}"]`);
+      if (target) {
+        const amt = parseInt(target.getAttribute('data-amount'), 10);
+        const pct = target.getAttribute('data-pct');
+        highlightDonutSegment(target, cat, amt, pct);
+      }
+    }
+
+    function resetDonutHighlight() {
+      document.querySelectorAll('.donut-segment').forEach(el => {
+        el.classList.remove('highlighted');
+        el.style.opacity = '1';
+      });
+      const totalAmd = transactions.reduce((acc, t) => acc + t.amountAmd, 0);
+      const totalRub = rateAmdPerRub > 0 ? Math.round(totalAmd / rateAmdPerRub) : 0;
+      resetDonutCenterDisplay(totalAmd, totalRub);
+    }
+
+    function resetDonutCenterDisplay(totalAmd, totalRub) {
+      document.getElementById('donutCenterLabel').textContent = 'Всего';
+      document.getElementById('overviewDonutTotalAmd').textContent = `${totalAmd.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('overviewDonutTotalRub').textContent = `≈ ${totalRub.toLocaleString('ru-RU')} ₽`;
+    }
+
+    function fillAiExample(text) {
+      document.getElementById('aiInputText').value = text;
+    }
+
+    let activeSpeechRecognition = null;
+    let isVoiceRecording = false;
+
+    function createFreshRecognition() {
+      const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognitionClass) return null;
+
+      try {
+        const rec = new SpeechRecognitionClass();
+        rec.lang = 'ru-RU';
+        rec.continuous = false;
+        rec.interimResults = true;
+        rec.maxAlternatives = 1;
+
+        rec.onstart = () => {
+          isVoiceRecording = true;
+          updateVoiceButtonState(true);
+          const banner = document.getElementById('voiceLiveBanner');
+          if (banner) banner.classList.remove('hidden');
+          showToast('Микрофон включен, говорите...', '🎙️');
+        };
+
+        rec.onresult = (e) => {
+          let interim = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) {
+            interim += e.results[i][0].transcript;
+          }
+          if (interim) {
+            document.getElementById('aiInputText').value = interim;
+            const statusLabel = document.getElementById('voiceLiveStatusText');
+            if (statusLabel) statusLabel.textContent = `«${interim}»`;
+          }
+        };
+
+        rec.onerror = (e) => {
+          console.warn('SpeechRecognition error:', e.error);
+          stopVoiceRecording();
+          
+          if (e.error === 'not-allowed') {
+            showToast('Разрешите доступ к микрофону в браузере!', '⚠️');
+          } else if (e.error === 'no-speech') {
+            showToast('Речь не обнаружена. Попробуйте еще раз', 'ℹ️');
+          } else if (e.error === 'network') {
+            showToast('Голосовой сервис недоступен без интернета', '⚠️');
+          } else {
+            showToast('Ошибка распознавания. Попробуйте снова', '⚠️');
+          }
+        };
+
+        rec.onend = () => {
+          stopVoiceRecording();
+          const recognizedText = document.getElementById('aiInputText').value.trim();
+          if (recognizedText) {
+            showToast('Речь принята! Нажмите «Распознать» или продолжите', '✨');
+          }
+        };
+
+        return rec;
+      } catch (err) {
+        console.error('Failed to create SpeechRecognition instance:', err);
+        return null;
+      }
+    }
+
+    async function toggleVoiceRecording() {
+      if (isVoiceRecording) {
+        stopVoiceRecording();
+        return;
+      }
+      await startVoiceRecording();
+    }
+
+    async function startVoiceRecording() {
+      const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognitionClass) {
+        const demoPhrase = 'Такси на Каскад 1400 и ужин 8500';
+        document.getElementById('aiInputText').value = demoPhrase;
+        showToast('В вашем браузере отключен Web Speech API (вставлен пример)', '🎙️');
+        return;
+      }
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach(track => track.stop());
+        } catch (permErr) {
+          console.warn('Microphone permission request rejected:', permErr);
+          showToast('Разрешите микрофон в настройках браузера', '⚠️');
+          return;
+        }
+      }
+
+      stopVoiceRecording();
+
+      activeSpeechRecognition = createFreshRecognition();
+      if (!activeSpeechRecognition) {
+        showToast('Не удалось инициализировать диктовку', '⚠️');
+        return;
+      }
+
+      try {
+        activeSpeechRecognition.start();
+      } catch (err) {
+        console.warn('Speech recognition start failed:', err);
+        stopVoiceRecording();
+        showToast('Не удалось запустить запись звука', '⚠️');
+      }
+    }
+
+    function stopVoiceRecording() {
+      isVoiceRecording = false;
+      if (activeSpeechRecognition) {
+        try { activeSpeechRecognition.stop(); } catch (e) {}
+        activeSpeechRecognition = null;
+      }
+      updateVoiceButtonState(false);
+      const banner = document.getElementById('voiceLiveBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    function updateVoiceButtonState(recording) {
+      const btn = document.getElementById('voiceRecordBtn');
+      const icon = document.getElementById('voiceIcon');
+      const label = document.getElementById('voiceLabel');
+      if (!btn) return;
+
+      if (recording) {
+        btn.classList.add('mic-recording');
+        icon.textContent = '🔴';
+        label.textContent = 'Слушаю...';
+      } else {
+        btn.classList.remove('mic-recording');
+        icon.textContent = '🎙️';
+        label.textContent = 'Голос';
+      }
+    }
+
+    function processAiInput() {
+      const input = document.getElementById('aiInputText');
+      const query = input.value.trim();
+
+      if (!query && !attachedReceiptFile) {
+        showToast('Введите текст или прикрепите чек', '⚠️');
+        return;
+      }
+
+      let detectedAmount = 0;
+      let detectedCategory = 'Прочее';
+      let detectedTitle = query || 'Чек из заведения';
+
+      const numbers = query.match(/\d[\d\s]*\d|\d+/g);
+      if (numbers && numbers.length > 0) {
+        const cleaned = numbers[numbers.length - 1].replace(/\s+/g, '');
+        detectedAmount = parseInt(cleaned, 10);
+      }
+
+      if (!detectedAmount && attachedReceiptFile) {
+        detectedAmount = Math.floor(Math.random() * 4000) + 2500;
+        detectedTitle = 'Покупка по чеку';
+      }
+
+      if (!detectedAmount || isNaN(detectedAmount)) {
+        showToast('Укажите сумму (например: 1500)', '⚠️');
+        return;
+      }
+
+      const qLower = query.toLowerCase();
+      if (/такси|яндекс|gg|каскад|аэропорт|машина|звартноц/i.test(qLower)) detectedCategory = 'Транспорт и Такси';
+      else if (/еда|кафе|обед|ужин|ресторан|шаурма|таверна|лаваш|кофе/i.test(qLower)) detectedCategory = 'Еда и кафе';
+      else if (/sas|сас|супермаркет|продукты|city|zovq|сыр/i.test(qLower)) detectedCategory = 'Супермаркеты';
+      else if (/вино|арени|коньяк|арарат|ной|сувенир|вернисаж/i.test(qLower)) detectedCategory = 'Вино и сувениры';
+      else if (/отель|аренда|жилье|посуточно|airbnb/i.test(qLower)) detectedCategory = 'Жилье и отели';
+      else if (/гарни|гегард|севан|гид|экскурсия|музей/i.test(qLower)) detectedCategory = 'Экскурсии и гиды';
+      else if (/аптека|лекарств|альфа|рихтер|здоров/i.test(qLower)) detectedCategory = 'Аптеки и здоровье';
+      else if (/sim|сим|ucom|team|viva|мтс|связь|интернет/i.test(qLower)) detectedCategory = 'Связь и SIM';
+
+      transactions.unshift({
+        id: Date.now().toString(),
+        title: detectedTitle,
+        category: detectedCategory,
+        amountAmd: detectedAmount,
+        date: 'Сегодня, ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+      });
+
+      saveState();
+      input.value = '';
+      removeAttachedReceipt();
+
+      renderOverviewDonut();
+      renderAnalyticsView();
+      renderBudgetView();
+
+      showToast(`Записано: ${detectedAmount.toLocaleString('ru-RU')} ֏ (${detectedCategory})`, '✓');
+    }
+
+    function handleReceiptFileSelected(e) {
+      const file = e.target.files[0];
+      if (file) {
+        attachedReceiptFile = file;
+        document.getElementById('receiptFileName').textContent = file.name;
+        document.getElementById('receiptPreviewBox').classList.remove('hidden');
+        showToast('Чек прикреплен', '📷');
+      }
+    }
+
+    function removeAttachedReceipt() {
+      attachedReceiptFile = null;
+      document.getElementById('receiptFileInput').value = '';
+      document.getElementById('receiptPreviewBox').classList.add('hidden');
+    }
+
+    function onAmdConvChanged(val) {
+      const amd = parseFloat(val) || 0;
+      const rub = amd > 0 ? (amd / rateAmdPerRub).toFixed(0) : '';
+      document.getElementById('convRubInput').value = rub;
+    }
+
+    function onRubConvChanged(val) {
+      const rub = parseFloat(val) || 0;
+      const amd = rub > 0 ? Math.round(rub * rateAmdPerRub) : '';
+      document.getElementById('convAmdInput').value = amd;
+    }
+
+    function setFastConvAmd(val) {
+      document.getElementById('convAmdInput').value = val;
+      onAmdConvChanged(val);
+    }
+
+    function updateRateTickerDisplay() {
+      document.getElementById('rateTickerLabel').textContent = `1 ₽ = ${rateAmdPerRub.toFixed(2)} ֏`;
+      const cityLabel = document.getElementById('geoCityLabel');
+      if (cityLabel) {
+        cityLabel.textContent = `${currentLocationName}:`;
+      }
+      const settingsBadge = document.getElementById('settingsCurrentLocBadge');
+      if (settingsBadge) {
+        settingsBadge.textContent = currentLocationName;
+      }
+    }
+
+    function detectGeoFromSettings() {
+      const icon = document.getElementById('settingsGpsIcon');
+      const text = document.getElementById('settingsGpsText');
+      if (!navigator.geolocation) {
+        showToast('Геолокация недоступна в браузере', '⚠️');
+        return;
+      }
+
+      icon.textContent = '⏳';
+      text.textContent = 'Определяем координаты...';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          resolveArmeniaRateByCoords(lat, lng);
+          icon.textContent = '✓';
+          text.textContent = 'Геопозиция определена!';
+          setTimeout(() => {
+            icon.textContent = '🛰️';
+            text.textContent = 'Определить мою геопозицию по GPS';
+          }, 2000);
+        },
+        (err) => {
+          console.warn('Geolocation error in settings:', err);
+          icon.textContent = '📍';
+          text.textContent = 'Определить мою геопозицию по GPS';
+          setCityFromSettings('Ереван (Центр / SAS)', 4.25);
+          showToast('Установлен Ереван (SAS / MG, 4.25 ֏)', '📍');
+        },
+        { timeout: 7000, maximumAge: 60000 }
+      );
+    }
+
+    function setCityFromSettings(cityName, rate) {
+      currentLocationName = cityName;
+      setCustomRate(rate, cityName);
+      const input = document.getElementById('settingsCustomLocInput');
+      if (input) input.value = '';
+      showToast(`Локация: ${cityName}`, '📍');
+    }
+
+    function applyCustomLocFromSettings() {
+      const input = document.getElementById('settingsCustomLocInput');
+      const val = input.value.trim();
+      if (!val) {
+        showToast('Введите название локации', '⚠️');
+        return;
+      }
+      currentLocationName = val;
+      saveState();
+      updateRateTickerDisplay();
+      showToast(`Локация сохранена: ${val}`, '✓');
+    }
+
+    function syncRatesAnim() {
+      const icon = document.getElementById('syncIcon');
+      icon.style.transform = 'rotate(360deg)';
+      icon.style.transition = 'transform 0.5s ease';
+      setTimeout(() => {
+        icon.style.transform = 'none';
+        icon.style.transition = 'none';
+        showToast('Курс актуален: 1 ₽ = 4.25 ֏', '✓');
+      }, 500);
+    }
+
+    function renderAnalyticsView() {
+      const totalAmd = transactions.reduce((acc, t) => acc + t.amountAmd, 0);
+      const avgCheck = transactions.length > 0 ? Math.round(totalAmd / transactions.length) : 0;
+
+      document.getElementById('statAverageCheck').textContent = `${avgCheck.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('statAverageCheckRub').textContent = `≈ ${Math.round(avgCheck / rateAmdPerRub).toLocaleString('ru-RU')} ₽`;
+      document.getElementById('statTotalOperationsCount').textContent = transactions.length.toString();
+
+      const catTotals = {};
+      transactions.forEach(t => catTotals[t.category] = (catTotals[t.category] || 0) + t.amountAmd);
+
+      const chipsContainer = document.getElementById('analyticsCategoryChips');
+      const clearBtn = document.getElementById('clearCategoryFilterBtn');
+      if (selectedCategoryFilter) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+
+      chipsContainer.innerHTML = Object.entries(catTotals).map(([cat, amt]) => {
+        const isSelected = selectedCategoryFilter === cat;
+        const meta = CATEGORIES[cat] || CATEGORIES['Прочее'];
+        return `
+          <button onclick="toggleCategoryFilter('${cat}')" style="padding: 6px 12px; border-radius: 9999px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px; border: 1px solid ${isSelected ? 'var(--accent)' : 'rgba(255,255,255,0.1)'}; background: ${isSelected ? 'var(--accent)' : 'rgba(255,255,255,0.06)'}; color: #fff;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: ${meta.color};"></span>
+            <span>${cat}</span>
+            <span style="font-family: var(--apple-rounded-font); opacity: 0.8;">${amt.toLocaleString('ru-RU')} ֏</span>
+          </button>
+        `;
+      }).join('');
+
+      const list = document.getElementById('analyticsTransactionsList');
+      const filtered = selectedCategoryFilter ? transactions.filter(t => t.category === selectedCategoryFilter) : transactions;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 12px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08);">История операций пуста. Все добавленные траты отобразятся здесь.</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(t => {
+        const meta = CATEGORIES[t.category] || CATEGORIES['Прочее'];
+        const rubVal = Math.round(t.amountAmd / rateAmdPerRub);
+        return `
+          <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+              <div style="width: 36px; height: 36px; border-radius: 12px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                ${meta.icon}
+              </div>
+              <div style="overflow: hidden;">
+                <div style="color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.title}</div>
+                <div style="font-size: 10px; color: var(--text-muted);">${t.category} • ${t.date}</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+              <div style="text-align: right;">
+                <div style="color: #fff; font-size: 13px; font-weight: 700; font-family: var(--apple-rounded-font);">${t.amountAmd.toLocaleString('ru-RU')} ֏</div>
+                <div style="font-size: 10px; color: var(--text-muted); font-family: var(--apple-rounded-font);">≈ ${rubVal.toLocaleString('ru-RU')} ₽</div>
+              </div>
+              <button onclick="deleteTransaction('${t.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px; font-size: 14px;">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCategoryFilter(cat) {
+      selectedCategoryFilter = selectedCategoryFilter === cat ? null : cat;
+      renderAnalyticsView();
+    }
+
+    function clearCategoryFilter() {
+      selectedCategoryFilter = null;
+      renderAnalyticsView();
+    }
+
+    function deleteTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      saveState();
+      renderOverviewDonut();
+      renderAnalyticsView();
+      renderBudgetView();
+      showToast('Удалено', '✕');
+    }
+
+    function exportTransactionsCsv() {
+      let csv = 'ID,Дата,Название,Категория,Драмы(AMD),Рубли(RUB)\n';
+      transactions.forEach(t => {
+        const rub = Math.round(t.amountAmd / rateAmdPerRub);
+        csv += `"${t.id}","${t.date}","${t.title}","${t.category}",${t.amountAmd},${rub}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BarevPay_Expenses.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV файл экспортирован', '✓');
+    }
+
+    function renderBudgetView() {
+      const totalAmd = transactions.reduce((acc, t) => acc + t.amountAmd, 0);
+      const percent = budgetTotalAmd > 0 ? Math.min(Math.round((totalAmd / budgetTotalAmd) * 100), 100) : 0;
+      const remaining = Math.max(budgetTotalAmd - totalAmd, 0);
+      const daily = Math.round(remaining > 0 ? remaining / 7 : 0);
+
+      document.getElementById('budgetSpentPercent').textContent = `${percent}%`;
+      document.getElementById('budgetFractionLabel').textContent = `${totalAmd.toLocaleString('ru-RU')} ֏ / ${budgetTotalAmd.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('budgetProgressBar').style.width = `${percent}%`;
+      document.getElementById('budgetRemainingAmd').textContent = `${remaining.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('budgetRemainingRub').textContent = `≈ ${Math.round(remaining / rateAmdPerRub).toLocaleString('ru-RU')} ₽`;
+      document.getElementById('budgetDailyAmd').textContent = `${daily.toLocaleString('ru-RU')} ֏`;
+      document.getElementById('budgetDailyRub').textContent = `≈ ${Math.round(daily / rateAmdPerRub).toLocaleString('ru-RU')} ₽`;
+
+      // Update Discrete Home Budget Strip
+      const homeSpent = document.getElementById('homeBudgetSpentLabel');
+      const homeTotal = document.getElementById('homeBudgetTotalLabel');
+      const homeProgress = document.getElementById('homeBudgetProgressBar');
+      const homeDaily = document.getElementById('homeBudgetDailyRemLabel');
+
+      if (homeSpent) homeSpent.textContent = `${totalAmd.toLocaleString('ru-RU')} ֏`;
+      if (homeTotal) homeTotal.textContent = `${budgetTotalAmd.toLocaleString('ru-RU')} ֏`;
+      if (homeProgress) homeProgress.style.width = `${percent}%`;
+      if (homeDaily) homeDaily.textContent = `${daily.toLocaleString('ru-RU')} ֏/день`;
+    }
+
+    function editBudgetPrompt() {
+      const currentVal = budgetTotalAmd > 0 ? budgetTotalAmd.toString() : '';
+      const input = prompt('Введите общий бюджет поездки в драмах (֏):', currentVal);
+      if (input !== null) {
+        const parsed = parseInt(input.replace(/\s+/g, ''), 10);
+        if (!isNaN(parsed) && parsed >= 0) {
+          budgetTotalAmd = parsed;
+          saveState();
+          renderBudgetView();
+          showToast('Бюджет обновлен', '✓');
+        }
+      }
+    }
+
+    function switchTab(tabId) {
+      const tabs = ['overview', 'analytics', 'budget'];
+      tabs.forEach(t => {
+        const el = document.getElementById(t + 'Tab');
+        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tabId) {
+          el.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+      if (tabId === 'overview') renderOverviewDonut();
+      if (tabId === 'analytics') renderAnalyticsView();
+      if (tabId === 'budget') renderBudgetView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function applyTheme(themeName) {
+      if (themeName === 'default') document.body.removeAttribute('data-theme');
+      else document.body.setAttribute('data-theme', themeName);
+    }
+
+    function setTheme(themeName) {
+      applyTheme(themeName);
+      try { localStorage.setItem('barevpay_theme', themeName); } catch (e) {}
+      closeSettingsModal();
+      showToast('Тема применена', '🎨');
+    }
+
+    function applyAvatar(avatarId) {
+      const slot = document.getElementById('currentAvatarSlot');
+      const map = {
+        'ararat': { emoji: '🏔️' },
+        'garni': { emoji: '🏛️' },
+        'pomegranate': { emoji: '🍎' },
+        'apricot': { emoji: '🍑' }
+      };
+      const cur = map[avatarId] || map['ararat'];
+      slot.innerHTML = `<span>${cur.emoji}</span><span class="avatar-pencil">✎</span>`;
+    }
+
+    function selectAvatar(avatarId) {
+      applyAvatar(avatarId);
+      try { localStorage.setItem('barevpay_avatar', avatarId); } catch (e) {}
+      closeAvatarModal();
+      showToast('Аватар обновлен', '✓');
+    }
+
+    function setCustomRate(rate, label) {
+      rateAmdPerRub = parseFloat(rate);
+      saveState();
+      updateRateTickerDisplay();
+      onAmdConvChanged(document.getElementById('convAmdInput').value);
+      renderOverviewDonut();
+      renderAnalyticsView();
+      renderBudgetView();
+      closeRateModal();
+      showToast(`Курс: ${label} (1 ₽ = ${rateAmdPerRub.toFixed(2)} ֏)`, '✓');
+    }
+
+    /* СВОЙ ПОЛЬЗОВАТЕЛЬСКИЙ КУРС */
+    function applyUserDefinedRate() {
+      const input = document.getElementById('customUserRateInput');
+      const val = parseFloat(input.value.replace(',', '.'));
+      if (isNaN(val) || val <= 0) {
+        showToast('Введите корректное число курса', '⚠️');
+        return;
+      }
+      setCustomRate(val, 'Свой курс');
+    }
+
+    function submitManualExpense() {
+      const amtInput = document.getElementById('manualAmountInput');
+      const titleInput = document.getElementById('manualTitleInput');
+      const catInput = document.getElementById('manualCategoryInput');
+
+      const amt = parseInt(amtInput.value, 10);
+      const title = titleInput.value.trim() || 'Расход';
+      const cat = catInput.value;
+
+      if (!amt || amt <= 0) {
+        showToast('Введите корректную сумму', '⚠️');
+        return;
+      }
+
+      transactions.unshift({
+        id: Date.now().toString(),
+        title: title,
+        category: cat,
+        amountAmd: amt,
+        date: 'Сегодня, ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+      });
+
+      saveState();
+      closeManualExpenseModal();
+
+      amtInput.value = '';
+      titleInput.value = '';
+
+      renderOverviewDonut();
+      renderAnalyticsView();
+      renderBudgetView();
+      showToast(`Добавлено: ${amt.toLocaleString('ru-RU')} ֏`, '✓');
+    }
+
+    function openAvatarModal() { document.getElementById('avatarModal').classList.remove('hidden'); }
+    function closeAvatarModal() { document.getElementById('avatarModal').classList.add('hidden'); }
+    function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+    function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+    function openRateModal() { document.getElementById('rateModal').classList.remove('hidden'); }
+    function closeRateModal() { document.getElementById('rateModal').classList.add('hidden'); }
+    function openManualExpenseModal() { document.getElementById('manualModal').classList.remove('hidden'); }
+    function closeManualExpenseModal() { document.getElementById('manualModal').classList.add('hidden'); }
+
+    let toastTimer = null;
+    function showToast(msg, icon = '✓') {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
